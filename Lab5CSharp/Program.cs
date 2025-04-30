@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 class Program
@@ -7,39 +7,31 @@ class Program
     {
         Console.WriteLine("Виберіть завдання:");
         Console.WriteLine("1 - Завдання 1 та 2");
+        Console.WriteLine("2 - Завдання 1 та 2");
         Console.WriteLine("3 - Завдання 3");
         int choice = int.Parse(Console.ReadLine());
 
         switch (choice)
         {
             case 1:
-                // Завдання 1 та 2
                 RunTask1And2();
                 break;
-
             case 2:
-                // Завдання 1 та 2
                 RunTask1And2();
                 break;
-
             case 3:
-                // Завдання 3
                 RunTask3();
                 break;
-
             default:
                 Console.WriteLine("Невірний вибір.");
                 break;
         }
     }
 
-    // Завдання 1 та 2
     static void RunTask1And2()
     {
         Console.WriteLine("Завдання 1 та 2");
 
-        // Завдання 1: Ієрархія класів
-        // Замінити створення PrintedEdition на конкретний клас (наприклад, Journal)
         PrintedEdition printedEdition = new Journal("Журнал наука", 2025, "Іван Іванов");
         printedEdition.Show();
         Console.WriteLine();
@@ -56,45 +48,39 @@ class Program
         textbook.Show();
         Console.WriteLine();
 
-        // Завдання 2: Конструктори і деструктори
         Console.WriteLine("Виклик деструкторів:");
-        GC.Collect();  // Змушує збирач сміття спрацювати та викликати деструктори
+        GC.Collect();
     }
 
-    // Завдання 3
     static void RunTask3()
     {
         Console.WriteLine("Завдання 3");
 
         List<Product> products = new List<Product>();
 
-        // Створення товарів
         Product product1 = new ProductItem("Молоко", 20.5m, new DateTime(2025, 3, 1), new DateTime(2025, 4, 10));
         Product product2 = new Batch("Пакет цукру", 15.0m, new DateTime(2025, 2, 15), new DateTime(2025, 5, 10), 100);
         Product product3 = new Set("Набір для чаю", 50.0m, new DateTime(2025, 1, 20), new DateTime(2025, 6, 1), new List<Product> { product1, product2 });
 
-        // Додавання товарів в масив
         products.Add(product1);
         products.Add(product2);
         products.Add(product3);
-
-        DateTime currentDate = DateTime.Now;
 
         Console.WriteLine("Всі товари:");
         foreach (var product in products)
         {
             product.Show();
-            Console.WriteLine($"Прострочений: {product.IsExpired(currentDate)}");
+            Console.WriteLine($"Прострочений: {(product.IsExpired() ? "так" : "ні")}");
             Console.WriteLine();
         }
 
-        // Пошук прострочених товарів
         Console.WriteLine("Прострочені товари:");
         foreach (var product in products)
         {
-            if (product.IsExpired(currentDate))
+            if (product.IsExpired())
             {
                 product.Show();
+                Console.WriteLine();
             }
         }
     }
@@ -105,12 +91,23 @@ abstract class PrintedEdition
     public string Title { get; set; }
     public int Year { get; set; }
 
-    public PrintedEdition() { }
+    public PrintedEdition()
+    {
+        Console.WriteLine("Створено PrintedEdition (без параметрів)");
+    }
+
     public PrintedEdition(string title, int year)
     {
         Title = title;
         Year = year;
-        Console.WriteLine("Створено PrintedEdition");
+        Console.WriteLine($"Створено PrintedEdition: Назва: {Title}, Рік: {Year}");
+    }
+
+    public PrintedEdition(string title)
+    {
+        Title = title;
+        Year = 2023;
+        Console.WriteLine($"Створено PrintedEdition: Назва: {Title}, Рік за замовчуванням: {Year}");
     }
 
     public virtual void Show()
@@ -128,11 +125,21 @@ class Journal : PrintedEdition
 {
     public string Editor { get; set; }
 
-    public Journal() : base() { }
+    public Journal() : base()
+    {
+        Console.WriteLine("Створено Journal (без параметрів)");
+    }
+
     public Journal(string title, int year, string editor) : base(title, year)
     {
         Editor = editor;
-        Console.WriteLine("Створено Journal");
+        Console.WriteLine($"Створено Journal: Редактор : {Editor}");
+    }
+
+    public Journal(string title) : base(title)
+    {
+        Editor = "Невідомий редактор";
+        Console.WriteLine($"Створено Journal: Редактор за замовчуванням: {Editor}");
     }
 
     public override void Show()
@@ -151,11 +158,21 @@ class Book : PrintedEdition
 {
     public string Author { get; set; }
 
-    public Book() : base() { }
+    public Book() : base()
+    {
+        Console.WriteLine("Створено Book (без параметрів)");
+    }
+
     public Book(string title, int year, string author) : base(title, year)
     {
         Author = author;
-        Console.WriteLine("Створено Book");
+        Console.WriteLine($"Створено Book: Автор: {Author}");
+    }
+
+    public Book(string title) : base(title)
+    {
+        Author = "Невідомий автор";
+        Console.WriteLine($"Створено Book: Автор за замовчуванням: {Author}");
     }
 
     public override void Show()
@@ -174,11 +191,21 @@ class Textbook : Book
 {
     public string Subject { get; set; }
 
-    public Textbook() : base() { }
+    public Textbook() : base()
+    {
+        Console.WriteLine("Створено Textbook (без параметрів)");
+    }
+
     public Textbook(string title, int year, string author, string subject) : base(title, year, author)
     {
         Subject = subject;
-        Console.WriteLine("Створено Textbook");
+        Console.WriteLine($"Створено Textbook: Предмет - {Subject}");
+    }
+
+    public Textbook(string title) : base(title)
+    {
+        Subject = "Невідомий предмет";
+        Console.WriteLine($"Створено Textbook: Предмет за замовчуванням - {Subject}");
     }
 
     public override void Show()
@@ -202,12 +229,6 @@ abstract class Product
 
     public abstract void Show();
     public abstract bool IsExpired();
-
-    // Метод для перевірки терміну придатності
-    public bool IsExpired(DateTime currentDate)
-    {
-        return currentDate > ExpiryDate;
-    }
 }
 
 class ProductItem : Product
